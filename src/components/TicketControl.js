@@ -6,6 +6,7 @@ import TicketDetail from './TicketDetail';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as a from './../actions';
+import { formatDistance, formatDistanceToNow } from 'date-fns';
 
 class TicketControl extends React.Component {
 
@@ -24,17 +25,23 @@ class TicketControl extends React.Component {
     );
   }
 
-  componentDidUpdate(){
-    console.log("component updated!")
-  }
+  // componentDidUpdate(){
+  //   console.log("component updated!")
+  // }
 
   componentWillUnmount(){
-    console.log("component unmounted!");
     clearInterval(this.waitTimeUpdateTimer);
   }
 
   updateTicketElapsedWaitTime = () => {
-    console.log("tick");
+    const { dispatch } = this.props;
+    Object.values(this.props.mainTicketList).forEach(ticket => {
+      const newFormattedWaitTime = formatDistanceToNow(ticket.timeOpen, {
+        addSuffix: true
+      });
+      const action = a.updateTime(ticket.id, newFormattedWaitTime);
+      dispatch(action);
+    })
   }
 
   handleClick = () => {
